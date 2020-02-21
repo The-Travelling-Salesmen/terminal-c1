@@ -1,0 +1,152 @@
+{
+  "seasonCompatibilityModeP1": 5,
+  "seasonCompatibilityModeP2": 5,
+  "debug":{
+    "printMapString":false,
+    "printTStrings":false,
+    "printActStrings":false,
+    "printHitStrings":false,
+    "printPlayerInputStrings":false,
+    "printBotErrors":true,
+    "printPlayerGetHitStrings":false
+  },
+  "unitInformation": [
+    {
+      "cost1": 1.0,
+      "getHitRadius":0.01,
+      "display":"Filter",
+      "shorthand":"FF",
+      "startHealth":60.0,
+      "unitCategory": 0,
+      "refundPercentage": 0.75,
+      "turnsRequiredToRemove": 1,
+      "upgrade": {
+        "startHealth": 120.0
+      }
+    },
+    {
+      "cost1":4.0,
+      "getHitRadius":0.01,
+      "shieldPerUnit":3.0,
+      "display":"Encryptor",
+      "shieldRange":3.5,
+      "shorthand":"EF",
+      "startHealth":30.0,
+      "unitCategory": 0,
+      "shieldBonusPerY": 0.0,
+      "refundPercentage": 0.75,
+      "shieldDecay": 0.0,
+      "turnsRequiredToRemove": 1,
+      "upgrade": {
+        "shieldRange": 7,
+        "shieldPerUnit":4
+      }
+    },
+    {
+      "attackDamageWalker":16.0,
+      "cost1":6.0,
+      "getHitRadius":0.01,
+      "display":"Destructor",
+      "attackRange":3.5,
+      "shorthand":"DF",
+      "startHealth":75.0,
+      "unitCategory": 0,
+      "refundPercentage": 0.75,
+      "turnsRequiredToRemove": 1,
+      "upgrade": {
+        "attackDamageWalker":32.0
+      }
+    },
+
+
+    {
+      "attackDamageTower":2.0,
+      "attackDamageWalker":2.0,
+      "playerBreachDamage":1.0,
+      "cost2":1.0,
+      "getHitRadius":0.01,
+      "display":"Ping",
+      "attackRange":3.5,
+      "shorthand":"PI",
+      "startHealth":15.0,
+      "speed":1,
+      "unitCategory": 1,
+      "selfDestructDamageWalker": 15.0,
+      "selfDestructDamageTower": 15.0,
+      "metalForBreach": 1.0,
+      "selfDestructRange": 1.5,
+      "selfDestructStepsRequired": 5
+    },
+    {
+      "attackDamageWalker":8.0,
+      "attackDamageTower":8.0,
+      "playerBreachDamage":1.0,
+      "cost2":3.0,
+      "getHitRadius":0.01,
+      "display":"EMP",
+      "attackRange":4.5,
+      "shorthand":"EI",
+      "startHealth":5.0,
+      "speed":0.5,
+      "unitCategory": 1,
+      "selfDestructDamageWalker": 5.0,
+      "selfDestructDamageTower": 5.0,
+      "metalForBreach": 1.0,
+      "selfDestructRange": 1.5,
+      "selfDestructStepsRequired": 5
+    },
+    {
+      "attackDamageWalker":20.0,
+      "playerBreachDamage":1.0,
+      "cost2":1.0,
+      "getHitRadius":0.01,
+      "display":"Scrambler",
+      "attackRange":4.5,
+      "shorthand":"SI",
+      "startHealth":40.0,
+      "speed":0.25,
+      "unitCategory": 1,
+      "selfDestructDamageWalker": 40.0,
+      "selfDestructDamageTower": 40.0,
+      "metalForBreach": 1.0,
+      "selfDestructRange": 1.5,
+      "selfDestructStepsRequired": 5
+    },
+    {
+      "display":"Remove",
+      "shorthand":"RM"
+    },
+    {
+      "display":"Upgrade",
+      "shorthand":"UP"
+    }
+  ],
+  "timingAndReplay":{
+    "waitTimeBotMax":35000,
+    "playWaitTimeBotMax":40000,
+    "waitTimeManual":1820000,
+    "waitForever":false,
+    "waitTimeBotSoft":5000,
+    "playWaitTimeBotSoft":10000,
+    "replaySave":1,
+    "playReplaySave":0,
+    "storeBotTimes":true,
+    "waitTimeStartGame":3000,
+    "waitTimeEndGame":3000
+  },
+  "resources":{
+    "turnIntervalForBitCapSchedule":10,
+    "turnIntervalForBitSchedule":10,
+    "bitRampBitCapGrowthRate":5.0,
+    "roundStartBitRamp":10,
+    "bitGrowthRate":1.0,
+    "startingHP":30.0,
+    "maxBits":150.0,
+    "bitsPerRound":5.0,
+    "coresPerRound":5.0,
+    "coresForPlayerDamage":1.0,
+    "startingBits":5.0,
+    "bitDecayPerRound":0.25,
+    "startingCores":40.0
+  }
+}

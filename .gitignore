@@ -1,0 +1,12 @@
+*.DS_Store*
+*.replay
+*__pycache__*
+
+algos/*
+!algos/starter-algo-ZIPME
+
+dist/*
+!dist/.gitkeep
+
+*.zip
+*/.idea/*
