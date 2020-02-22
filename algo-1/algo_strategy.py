@@ -76,12 +76,33 @@ class AlgoStrategy(gamelib.AlgoCore):
         If there are no stationary units to attack in the front, we will send Pings to try and score quickly.
         """
         # First, place basic defenses
-        self.build_defences(game_state)
+        # NOTE: This is commmented out from the starter strategy
+        # self.build_defences(game_state)
         # Now build reactive defenses based on where the enemy scored
-        self.build_reactive_defense(game_state)
 
+        # NOTE: This is commmented out from the starter strategy
+        # self.build_reactive_defense(game_state)
+
+        destructor_locations = [[2, 13], [3, 13], [10, 13], [17, 13], [24, 13], [25, 13]]
+        # attempt_spawn will try to spawn units if we have resources, and will check if a blocking unit is already there
+        game_state.attempt_spawn(DESTRUCTOR, destructor_locations)
+        
+
+        if game_state.turn_number > 3:
+            filter_locations = [[0, 13], [1, 13], [5, 13], [6, 13], [7, 13], [8, 13], [9, 13], [11, 13], [12, 13], [13, 13], [14, 13], [15, 13], [16, 13], [18, 13], [19, 13], [20, 13], [21, 13], [22, 13], [23, 13], [26, 13], [27, 13]]
+            game_state.attempt_spawn(FILTER, filter_locations)
+
+            encryptor_locations = [[21, 8], [22, 8]]
+            game_state.attempt_spawn(ENCRYPTOR, encryptor_locations)
+
+            emp_location = [[23, 9]]
+            game_state.attempt_spawn(EMP, emp_location, 1000)
+
+
+        """
         # If the turn is less than 5, stall with Scramblers and wait to see enemy's base
         if game_state.turn_number < 5:
+            gamelib.debug_write(f"Game state turn number: {game_state.turn_number}")
             self.stall_with_scramblers(game_state)
         else:
             # Now let's analyze the enemy base to see where their defenses are concentrated.
@@ -103,6 +124,8 @@ class AlgoStrategy(gamelib.AlgoCore):
                 encryptor_locations = [[13, 2], [14, 2], [13, 3], [14, 3]]
                 game_state.attempt_spawn(ENCRYPTOR, encryptor_locations)
 
+        """
+
     def build_defences(self, game_state):
         """
         Build basic defenses using hardcoded locations.
@@ -112,12 +135,12 @@ class AlgoStrategy(gamelib.AlgoCore):
         # More community tools available at: https://terminal.c1games.com/rules#Download
 
         # Place destructors that attack enemy units
-        destructor_locations = [[0, 13], [27, 13], [8, 11], [19, 11], [13, 11], [14, 11]]
+        destructor_locations = [[2, 13], [3, 13], [10, 13], [17, 13], [24, 13], [25, 13]]
         # attempt_spawn will try to spawn units if we have resources, and will check if a blocking unit is already there
         game_state.attempt_spawn(DESTRUCTOR, destructor_locations)
         
         # Place filters in front of destructors to soak up damage for them
-        filter_locations = [[8, 12], [19, 12]]
+        filter_locations = [[0, 13], [1, 13], [5, 13], [6, 13], [7, 13], [8, 13], [9, 13], [11, 13], [12, 13], [13, 13], [14, 13], [15, 13], [16, 13], [18, 13], [19, 13], [20, 13], [21, 13], [22, 13], [23, 13], [26, 13], [27, 13]]
         game_state.attempt_spawn(FILTER, filter_locations)
         # upgrade filters so they soak more damage
         game_state.attempt_upgrade(filter_locations)
