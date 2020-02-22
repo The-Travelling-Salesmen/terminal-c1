@@ -86,15 +86,14 @@ class AlgoStrategy(gamelib.AlgoCore):
 
     def strategy(self, game_state):
 
+        # Dynamic defence
+        if game_state.turn_number < 4 and len(self.scored_on_locations) > 0:
+            build_reactive_defense(gamelib, game_state, self.units, self.scored_on_locations)
+
         # Initial wall defence
         # Adaptive opening side selection
         filter_locs, self.is_right_opening = build_defences_with_adaptive_opening(game_state, self.units, self.is_right_opening, self.filter_locs)
     
-
-        # Dynamic defence
-        if len(self.scored_on_locations) > 0:
-            build_reactive_defense(gamelib, game_state, self.units, self.scored_on_locations)
-        
         if game_state.turn_number > 3:
             # Defence
             build_defences(game_state, self.units, self.is_right_opening, filter_locs)

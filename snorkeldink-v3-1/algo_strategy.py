@@ -95,6 +95,7 @@ class AlgoStrategy(gamelib.AlgoCore):
                 emp_location = [[4, 9]]
             else:
                 emp_location = [[23, 9]]
+                
             game_state.attempt_spawn(EMP, emp_location, 1000)
 
 
