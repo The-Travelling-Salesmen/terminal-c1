@@ -51,9 +51,10 @@ class AlgoStrategy(gamelib.AlgoCore):
         Units = namedtuple('Units', 'FILTER ENCRYPTOR DESTRUCTOR PING EMP SCRAMBLER')
         self.units = Units(FILTER, ENCRYPTOR, DESTRUCTOR, PING, EMP, SCRAMBLER)
 
-        self.enemy_vulnerable_side = 1
+        # Assume right side is vulnerable
+        self.is_right_opening = True
         self.filter_locs = [[0, 13], [1, 13], [5, 13], [6, 13], [7, 13], [8, 13], [9, 13], [11, 13], 
-        [12, 13], [13, 13], [14, 13], [15, 13], [16, 13], [18, 13], [19, 13], [20, 13], [21, 13], [22, 13], [26, 13], [27, 13], [4, 13]]
+        [12, 13], [13, 13], [14, 13], [15, 13], [16, 13], [18, 13], [19, 13], [20, 13], [21, 13], [22, 13], [26, 13], [27, 13]]
     
         
 
@@ -81,12 +82,16 @@ class AlgoStrategy(gamelib.AlgoCore):
 
     def strategy(self, game_state):
 
-        # Defence
-        build_defences_with_adaptive_opening(game_state, self.units, self.enemy_vulnerable_side, self.filter_locs)
-        # Offense
+        # Initial wall defence
+        # Adaptive opening side selection
+        filter_locs, self.is_right_opening = build_defences_with_adaptive_opening(game_state, self.units, self.is_right_opening, self.filter_locs)
+        
         if game_state.turn_number > 3:
-            
-            if self.enemy_vulnerable_side == 1:
+            # Defence
+            build_defences(game_state, self.units, self.is_right_opening, filter_locs)
+        
+             # Offense            
+            if self.is_right_opening:
                 emp_location = [[4, 9]]
             else:
                 emp_location = [[23, 9]]
