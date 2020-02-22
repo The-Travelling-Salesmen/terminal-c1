@@ -89,7 +89,14 @@ class AlgoStrategy(gamelib.AlgoCore):
         
 
         if game_state.turn_number > 3:
-            filter_locations = [[0, 13], [1, 13], [5, 13], [6, 13], [7, 13], [8, 13], [9, 13], [11, 13], [12, 13], [13, 13], [14, 13], [15, 13], [16, 13], [18, 13], [19, 13], [20, 13], [21, 13], [22, 13], [23, 13], [26, 13], [27, 13]]
+            filter_locations =  [[0, 13], [1, 13], [5, 13], [6, 13], [7, 13], [8, 13], [9, 13], [11, 13], [12, 13], [13, 13], [14, 13], [15, 13], [16, 13], [18, 13], [19, 13], [20, 13], [21, 13], [22, 13], [26, 13], [27, 13]]
+
+            vulnerable_side = self.find_weaker_side(game_state) # change to detect less loaded enemy def's side. 1 is right, 0 is left.
+            if vulnerable_side == 1:
+                filter_locations.append([4, 13])
+            else:
+                filter_locations.append([23, 13])
+            
             game_state.attempt_spawn(FILTER, filter_locations)
 
             encryptor_locations = [[21, 8], [22, 8]]
@@ -257,6 +264,32 @@ class AlgoStrategy(gamelib.AlgoCore):
                 self.scored_on_locations.append(location)
                 gamelib.debug_write("All locations: {}".format(self.scored_on_locations))
 
+    # Assess enemy defence & identify weaker side (for opening)
+    def find_weaker_side(self, game_state, weights = None):
+        if not weights:
+            weights = [1, 6] # filter is worth 1 badness pt, destructor - 6 badness pts.
+        
+        weights_by_def_unit = dict(zip([FILTER, DESTRUCTOR], weights))
+
+        left_strength, right_strength = (0, 0)
+
+        for location in game_state.game_map:
+            if game_state.contains_stationary_unit(location):
+                for unit in game_state.game_map[location]:
+                    if unit.player_index == 1 and (unit.unit_type is DESTRUCTOR or unit.unit_type == FILTER):
+                        if location[0] > 14:
+                            left_strength += weights_by_def_unit[unit.unit_type]
+                        else:                    
+                            right_strength += weights_by_def_unit[unit.unit_type]
+        
+        # Return side with less strength
+        if left_strength > right_strength:
+            weaker_side = 1
+        elif left_strength < right_strength:
+            weaker_side = 0
+        else:
+            weaker_side = random.randint(0, 1)
+        return weaker_side
 
 if __name__ == "__main__":
     algo = AlgoStrategy()
