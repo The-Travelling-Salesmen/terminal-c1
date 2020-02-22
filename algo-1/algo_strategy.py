@@ -4,9 +4,6 @@ import math
 import warnings
 from sys import maxsize
 import json
-from defence import build_defences
-
-from collections import namedtuple
 
 
 """
@@ -46,9 +43,6 @@ class AlgoStrategy(gamelib.AlgoCore):
         # This is a good place to do initial setup
         self.scored_on_locations = []
 
-        Units = namedtuple('Units', 'FILTER ENCRYPTOR DESTRUCTOR PING EMP SCRAMBLER')
-        self.units = Units(FILTER, ENCRYPTOR, DESTRUCTOR, PING, EMP, SCRAMBLER)
-
     
         
 
@@ -64,7 +58,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         gamelib.debug_write('Performing turn {} of your custom algo strategy'.format(game_state.turn_number))
         game_state.suppress_warnings(True)  #Comment or remove this line to enable warnings.
 
-        self.strategy(game_state)
+        self.starter_strategy(game_state)
 
         game_state.submit_turn()
 
@@ -74,18 +68,63 @@ class AlgoStrategy(gamelib.AlgoCore):
     strategy and can safely be replaced for your custom algo.
     """
 
-    def strategy(self, game_state):
+    def starter_strategy(self, game_state):
+        """
+        For defense we will use a spread out layout and some Scramblers early on.
+        We will place destructors near locations the opponent managed to score on.
+        For offense we will use long range EMPs if they place stationary units near the enemy's front.
+        If there are no stationary units to attack in the front, we will send Pings to try and score quickly.
+        """
+        # First, place basic defenses
+        # NOTE: This is commmented out from the starter strategy
+        # self.build_defences(game_state)
+        # Now build reactive defenses based on where the enemy scored
 
-        # Defence
-        build_defences(game_state, self.units)
-       
-       # Offense
+        # NOTE: This is commmented out from the starter strategy
+        # self.build_reactive_defense(game_state)
+
+        destructor_locations = [[2, 13], [3, 13], [10, 13], [17, 13], [24, 13], [25, 13]]
+        # attempt_spawn will try to spawn units if we have resources, and will check if a blocking unit is already there
+        game_state.attempt_spawn(DESTRUCTOR, destructor_locations)
+        
+
         if game_state.turn_number > 3:
-            
+            filter_locations = [[0, 13], [1, 13], [5, 13], [6, 13], [7, 13], [8, 13], [9, 13], [11, 13], [12, 13], [13, 13], [14, 13], [15, 13], [16, 13], [18, 13], [19, 13], [20, 13], [21, 13], [22, 13], [23, 13], [26, 13], [27, 13]]
+            game_state.attempt_spawn(FILTER, filter_locations)
+
+            encryptor_locations = [[21, 8], [22, 8]]
+            game_state.attempt_spawn(ENCRYPTOR, encryptor_locations)
+
             emp_location = [[23, 9]]
             game_state.attempt_spawn(EMP, emp_location, 1000)
 
 
+        """
+        # If the turn is less than 5, stall with Scramblers and wait to see enemy's base
+        if game_state.turn_number < 5:
+            gamelib.debug_write(f"Game state turn number: {game_state.turn_number}")
+            self.stall_with_scramblers(game_state)
+        else:
+            # Now let's analyze the enemy base to see where their defenses are concentrated.
+            # If they have many units in the front we can build a line for our EMPs to attack them at long range.
+            if self.detect_enemy_unit(game_state, unit_type=None, valid_x=None, valid_y=[14, 15]) > 10:
+                self.emp_line_strategy(game_state)
+            else:
+                # They don't have many units in the front so lets figure out their least defended area and send Pings there.
+
+                # Only spawn Ping's every other turn
+                # Sending more at once is better since attacks can only hit a single ping at a time
+                if game_state.turn_number % 2 == 1:
+                    # To simplify we will just check sending them from back left and right
+                    ping_spawn_location_options = [[13, 0], [14, 0]]
+                    best_location = self.least_damage_spawn_location(game_state, ping_spawn_location_options)
+                    game_state.attempt_spawn(PING, best_location, 1000)
+
+                # Lastly, if we have spare cores, let's build some Encryptors to boost our Pings' health.
+                encryptor_locations = [[13, 2], [14, 2], [13, 3], [14, 3]]
+                game_state.attempt_spawn(ENCRYPTOR, encryptor_locations)
+
+        """
 
     def build_defences(self, game_state):
         """
