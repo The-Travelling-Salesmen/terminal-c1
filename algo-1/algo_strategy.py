@@ -58,7 +58,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         gamelib.debug_write('Performing turn {} of your custom algo strategy'.format(game_state.turn_number))
         game_state.suppress_warnings(True)  #Comment or remove this line to enable warnings.
 
-        self.starter_strategy(game_state)
+        self.strategy(game_state)
 
         game_state.submit_turn()
 
@@ -68,20 +68,7 @@ class AlgoStrategy(gamelib.AlgoCore):
     strategy and can safely be replaced for your custom algo.
     """
 
-    def starter_strategy(self, game_state):
-        """
-        For defense we will use a spread out layout and some Scramblers early on.
-        We will place destructors near locations the opponent managed to score on.
-        For offense we will use long range EMPs if they place stationary units near the enemy's front.
-        If there are no stationary units to attack in the front, we will send Pings to try and score quickly.
-        """
-        # First, place basic defenses
-        # NOTE: This is commmented out from the starter strategy
-        # self.build_defences(game_state)
-        # Now build reactive defenses based on where the enemy scored
-
-        # NOTE: This is commmented out from the starter strategy
-        # self.build_reactive_defense(game_state)
+    def strategy(self, game_state):
 
         destructor_locations = [[2, 13], [3, 13], [10, 13], [17, 13], [24, 13], [25, 13]]
         # attempt_spawn will try to spawn units if we have resources, and will check if a blocking unit is already there
@@ -92,11 +79,27 @@ class AlgoStrategy(gamelib.AlgoCore):
             filter_locations = [[0, 13], [1, 13], [5, 13], [6, 13], [7, 13], [8, 13], [9, 13], [11, 13], [12, 13], [13, 13], [14, 13], [15, 13], [16, 13], [18, 13], [19, 13], [20, 13], [21, 13], [22, 13], [23, 13], [26, 13], [27, 13]]
             game_state.attempt_spawn(FILTER, filter_locations)
 
-            encryptor_locations = [[21, 8], [22, 8]]
+            # NOTE: coords below needs to be adaptive if we add adaptive change left hole vs right
+            encryptor_locations = [[21, 8], [22, 8], [20, 8]]
             game_state.attempt_spawn(ENCRYPTOR, encryptor_locations)
 
             emp_location = [[23, 9]]
             game_state.attempt_spawn(EMP, emp_location, 1000)
+
+            
+            destructor_locations = [[2, 12], [3, 11]]
+            game_state.attempt_spawn(DESTRUCTOR, destructor_locations)
+
+            encryptor_locations = [[24, 10]]
+            game_state.attempt_spawn(ENCRYPTOR, encryptor_locations)
+
+
+            destructor_locations = [[3, 10], [17, 11], [6, 8], [10, 11], [15, 9], [12, 9], [15, 6], [12, 6]]
+            game_state.attempt_spawn(DESTRUCTOR, destructor_locations)
+
+
+            encryptor_locations = [[23, 10]]
+            game_state.attempt_spawn(ENCRYPTOR, encryptor_locations)
 
 
         """
