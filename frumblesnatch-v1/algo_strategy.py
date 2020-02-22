@@ -79,6 +79,10 @@ class AlgoStrategy(gamelib.AlgoCore):
         # Defence
         build_defences(game_state, self.units)
 
+        if 0 <= game_state.turn_number < 2:
+            game_state.attempt_spawn(PING, [[19, 5]], 1000)
+
+
         # Offense
         if game_state.turn_number > 3:
             
