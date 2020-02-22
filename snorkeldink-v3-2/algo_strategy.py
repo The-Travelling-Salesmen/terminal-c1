@@ -74,6 +74,8 @@ class AlgoStrategy(gamelib.AlgoCore):
 
         self.strategy(game_state)
 
+        self.scored_on_locations = []
+
         game_state.submit_turn()
 
 
@@ -88,7 +90,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         # Adaptive opening side selection
         filter_locs, self.is_right_opening = build_defences_with_adaptive_opening(game_state, self.units, self.is_right_opening, self.filter_locs)
     
-    
+
         # Dynamic defence
         if len(self.scored_on_locations) > 0:
             build_reactive_defense(gamelib, game_state, self.units, self.scored_on_locations)
@@ -213,9 +215,7 @@ class AlgoStrategy(gamelib.AlgoCore):
             # When parsing the frame data directly, 
             # 1 is integer for yourself, 2 is opponent (StarterKit code uses 0, 1 as player_index instead)
             if not unit_owner_self:
-                gamelib.debug_write("Got scored on at: {}".format(location))
                 self.scored_on_locations.append(location)
-                gamelib.debug_write("All locations: {}".format(self.scored_on_locations))
 
 
 if __name__ == "__main__":
