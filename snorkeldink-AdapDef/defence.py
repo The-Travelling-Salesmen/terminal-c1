@@ -5,7 +5,7 @@
 def build_defences(game_state, units, is_right_opening, filter_locs):
 
     # Encryptors
-    encryptor_locations = [[10, 10], [17, 10]]
+    encryptor_locations = [[13, 10], [14, 10]]
     game_state.attempt_spawn(units.ENCRYPTOR, encryptor_locations)
     
     # Upgrade encryptors
