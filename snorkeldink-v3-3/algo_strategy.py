@@ -84,11 +84,12 @@ class AlgoStrategy(gamelib.AlgoCore):
 
         # Initial wall defence
         # Adaptive opening side selection
-        filter_locs, self.is_right_opening = build_defences_with_adaptive_opening(game_state, self.units, self.is_right_opening, self.filter_locs)
+        filter_locs, self.is_right_opening, save_cores = build_defences_with_adaptive_opening(game_state, self.units, self.is_right_opening, self.filter_locs)
         
         if game_state.turn_number > 3:
             # Defence
-            build_defences(game_state, self.units, self.is_right_opening, filter_locs)
+            if not save_cores:
+                build_defences(game_state, self.units, self.is_right_opening, filter_locs)
         
              # Offense            
             if self.is_right_opening:
