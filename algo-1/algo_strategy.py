@@ -6,6 +6,8 @@ from sys import maxsize
 import json
 from defence import build_defences
 
+from collections import namedtuple
+
 
 """
 Most of the algo code you write will be in this file unless you create new
@@ -44,6 +46,9 @@ class AlgoStrategy(gamelib.AlgoCore):
         # This is a good place to do initial setup
         self.scored_on_locations = []
 
+        Units = namedtuple('Units', 'FILTER ENCRYPTOR DESTRUCTOR PING EMP SCRAMBLER')
+        self.units = Units(FILTER, ENCRYPTOR, DESTRUCTOR, PING, EMP, SCRAMBLER)
+
     
         
 
@@ -72,7 +77,7 @@ class AlgoStrategy(gamelib.AlgoCore):
     def strategy(self, game_state):
 
         # Defence
-        build_defences(game_state)
+        build_defences(game_state, self.units)
        
        # Offense
         if game_state.turn_number > 3:
