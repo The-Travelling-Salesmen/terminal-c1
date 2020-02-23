@@ -9,7 +9,7 @@ def build_defences_with_adaptive_opening(game_state, units, is_right_opening, fi
     destructor_locations = [[2, 13], [3, 13], [10, 13], [17, 13], [24, 13], [25, 13]]
     game_state.attempt_spawn(units.DESTRUCTOR, destructor_locations)
     save_cores = False
-    if all(map(game_state.contains_stationary_unit, destructor_locations)):
+    if not all(map(game_state.contains_stationary_unit, destructor_locations)):
         save_cores = True
     
     if game_state.turn_number < 4:
