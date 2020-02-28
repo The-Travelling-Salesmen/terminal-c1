@@ -1,3 +1,8 @@
+"""
+Defensive part of Snorkeldink strategy
+"""
+
+
 def build_defences(game_state, units, is_right_opening, filter_locs):
 
     # Encryptors

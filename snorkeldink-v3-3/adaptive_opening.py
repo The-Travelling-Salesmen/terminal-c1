@@ -1,8 +1,12 @@
 import random
 from operator import itemgetter
 
-""" Adaptive opening defence. 
-    Assesses the enemy's defence and makes an opening, so that our EMPs attack weaker side."""
+
+"""
+Adaptive defence
+Assesses the enemy's defence and decides which side of the wall should
+have an opening so that our EMPs attack weaker side.
+"""
 
 
 def build_defences_with_adaptive_opening(
@@ -13,6 +17,8 @@ def build_defences_with_adaptive_opening(
     destructor_locations = [[2, 13], [3, 13], [10, 13], [17, 13], [24, 13], [25, 13]]
     game_state.attempt_spawn(units.DESTRUCTOR, destructor_locations)
     save_cores = False
+
+    # Save up cores until all wall-destructors are built
     if not all(map(game_state.contains_stationary_unit, destructor_locations)):
         save_cores = True
 
@@ -43,13 +49,16 @@ def build_defences_with_adaptive_opening(
     return final_filter_locs, is_right_opening, save_cores
 
 
-""" Assess enemy defence & identify weaker side (for opening)
-    Author @RKJ (blame me for the mistakes) """
+"""
+Assess enemy defence & identify weaker side (for opening)
+Author @RKJ (blame me for the mistakes)
+"""
 
 
 def should_right_be_open(game_state, units, weights=None):
     if not weights:
-        weights = [1, 6]  # filter is worth 1 badness pt, destructor - 6 badness pts.
+        # filter is worth 1 badness pt, destructor - 6 badness pts.
+        weights = [1, 6]
 
     weights_by_def_unit = dict(zip([units.FILTER, units.DESTRUCTOR], weights))
 

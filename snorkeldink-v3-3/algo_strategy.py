@@ -1,26 +1,17 @@
-import gamelib
-import random
-import math
-import warnings
-from sys import maxsize
 import json
-from defence import build_defences
-from adaptive_opening import build_defences_with_adaptive_opening
-
-
+import math
+import random
+import warnings
 from collections import namedtuple
+from sys import maxsize
+
+import gamelib
+from adaptive_opening import build_defences_with_adaptive_opening
+from defence import build_defences
 
 
 """
-Most of the algo code you write will be in this file unless you create new
-modules yourself. Start by modifying the 'on_turn' function.
-
-Advanced strategy tips:
-  - You can analyze action frames by modifying on_action_frame function
-
-  - The GameState.map object can be manually manipulated to create hypothetical 
-    board states. Though, we recommended making a copy of the map to preserve 
-    the actual current map state.
+Strategy-code for the final version of Snorkeldink-V69
 """
 
 
@@ -35,7 +26,6 @@ class AlgoStrategy(gamelib.AlgoCore):
         """ 
         Read in config and perform any initial setup here 
         """
-        gamelib.debug_write("Configuring your custom algo strategy...")
         self.config = config
         global FILTER, ENCRYPTOR, DESTRUCTOR, PING, EMP, SCRAMBLER, BITS, CORES
         FILTER = config["unitInformation"][0]["shorthand"]
@@ -46,13 +36,11 @@ class AlgoStrategy(gamelib.AlgoCore):
         SCRAMBLER = config["unitInformation"][5]["shorthand"]
         BITS = 1
         CORES = 0
-        # This is a good place to do initial setup
-        self.scored_on_locations = []
-
+        # Initial setup
         Units = namedtuple("Units", "FILTER ENCRYPTOR DESTRUCTOR PING EMP SCRAMBLER")
         self.units = Units(FILTER, ENCRYPTOR, DESTRUCTOR, PING, EMP, SCRAMBLER)
 
-        # Assume right side is vulnerable
+        # Initially assume right side is vulnerable
         self.is_right_opening = True
         self.filter_locs = [
             [0, 13],
@@ -87,16 +75,16 @@ class AlgoStrategy(gamelib.AlgoCore):
         """
         game_state = gamelib.GameState(self.config, turn_state)
         gamelib.debug_write(
-            "Performing turn {} of your custom algo strategy".format(
-                game_state.turn_number
-            )
+            f"Performing turn {game_state.turn_number} of Snorkeldink-V69 algo strategy"
         )
-        game_state.suppress_warnings(
-            True
-        )  # Comment or remove this line to enable warnings.
 
+        # Comment or remove this line to enable warnings.
+        game_state.suppress_warnings(True)
+
+        # Calculate next moves based on strategy
         self.strategy(game_state)
 
+        # Submit the moves
         game_state.submit_turn()
 
     def strategy(self, game_state):
@@ -134,29 +122,6 @@ class AlgoStrategy(gamelib.AlgoCore):
                     ):
                         total_units += 1
         return total_units
-
-    def on_action_frame(self, turn_string):
-        """
-        This is the action frame of the game. This function could be called 
-        hundreds of times per turn and could slow the algo down so avoid putting slow code here.
-        Processing the action frames is complicated so we only suggest it if you have time and experience.
-        Full doc on format of a game frame at: https://docs.c1games.com/json-docs.html
-        """
-        # Let's record at what position we get scored on
-        state = json.loads(turn_string)
-        events = state["events"]
-        breaches = events["breach"]
-        for breach in breaches:
-            location = breach[0]
-            unit_owner_self = True if breach[4] == 1 else False
-            # When parsing the frame data directly,
-            # 1 is integer for yourself, 2 is opponent (StarterKit code uses 0, 1 as player_index instead)
-            if not unit_owner_self:
-                gamelib.debug_write("Got scored on at: {}".format(location))
-                self.scored_on_locations.append(location)
-                gamelib.debug_write(
-                    "All locations: {}".format(self.scored_on_locations)
-                )
 
 
 if __name__ == "__main__":
