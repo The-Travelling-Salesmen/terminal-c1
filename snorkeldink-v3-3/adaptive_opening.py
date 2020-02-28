@@ -8,9 +8,12 @@ def build_defences_with_adaptive_opening(game_state, units, is_right_opening, fi
     # Place destructors that attack enemy units
     destructor_locations = [[2, 13], [3, 13], [10, 13], [17, 13], [24, 13], [25, 13]]
     game_state.attempt_spawn(units.DESTRUCTOR, destructor_locations)
+    save_cores = False
+    if not all(map(game_state.contains_stationary_unit, destructor_locations)):
+        save_cores = True
     
     if game_state.turn_number < 4:
-        return [], True
+        return [], True, save_cores
 
     # Find the weaker side of enemy's defence
     # Open up our filter defence towards that side
@@ -36,7 +39,7 @@ def build_defences_with_adaptive_opening(game_state, units, is_right_opening, fi
 
 
     game_state.attempt_spawn(units.FILTER, final_filter_locs)
-    return final_filter_locs, is_right_opening
+    return final_filter_locs, is_right_opening, save_cores
 
 
 """ Assess enemy defence & identify weaker side (for opening)
