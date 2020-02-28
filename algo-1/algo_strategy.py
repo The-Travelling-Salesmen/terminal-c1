@@ -19,18 +19,19 @@ Advanced strategy tips:
     the actual current map state.
 """
 
+
 class AlgoStrategy(gamelib.AlgoCore):
     def __init__(self):
         super().__init__()
         seed = random.randrange(maxsize)
         random.seed(seed)
-        gamelib.debug_write('Random seed: {}'.format(seed))
+        gamelib.debug_write("Random seed: {}".format(seed))
 
     def on_game_start(self, config):
         """ 
         Read in config and perform any initial setup here 
         """
-        gamelib.debug_write('Configuring your custom algo strategy...')
+        gamelib.debug_write("Configuring your custom algo strategy...")
         self.config = config
         global FILTER, ENCRYPTOR, DESTRUCTOR, PING, EMP, SCRAMBLER, BITS, CORES
         FILTER = config["unitInformation"][0]["shorthand"]
@@ -45,9 +46,6 @@ class AlgoStrategy(gamelib.AlgoCore):
         self.scored_on_locations = []
         self.death_counter = Counter()
 
-    
-        
-
     def on_turn(self, turn_state):
         """
         This function is called every turn with the game state wrapper as
@@ -57,13 +55,18 @@ class AlgoStrategy(gamelib.AlgoCore):
         game engine.
         """
         game_state = gamelib.GameState(self.config, turn_state)
-        gamelib.debug_write('Performing turn {} of your custom algo strategy'.format(game_state.turn_number))
-        game_state.suppress_warnings(True)  #Comment or remove this line to enable warnings.
+        gamelib.debug_write(
+            "Performing turn {} of your custom algo strategy".format(
+                game_state.turn_number
+            )
+        )
+        game_state.suppress_warnings(
+            True
+        )  # Comment or remove this line to enable warnings.
 
         self.starter_strategy(game_state)
 
         game_state.submit_turn()
-
 
     """
     NOTE: All the methods after this point are part of the sample starter-algo
@@ -85,20 +88,49 @@ class AlgoStrategy(gamelib.AlgoCore):
         # NOTE: This is commmented out from the starter strategy
         # self.build_reactive_defense(game_state)
 
-        destructor_locations = [[2, 13], [3, 13], [10, 13], [17, 13], [24, 13], [25, 13]]
+        destructor_locations = [
+            [2, 13],
+            [3, 13],
+            [10, 13],
+            [17, 13],
+            [24, 13],
+            [25, 13],
+        ]
         # attempt_spawn will try to spawn units if we have resources, and will check if a blocking unit is already there
         game_state.attempt_spawn(DESTRUCTOR, destructor_locations)
-        
 
         if game_state.turn_number > 3:
-            filter_locations =  [[0, 13], [1, 13], [5, 13], [6, 13], [7, 13], [8, 13], [9, 13], [11, 13], [12, 13], [13, 13], [14, 13], [15, 13], [16, 13], [18, 13], [19, 13], [20, 13], [21, 13], [22, 13], [26, 13], [27, 13]]
+            filter_locations = [
+                [0, 13],
+                [1, 13],
+                [5, 13],
+                [6, 13],
+                [7, 13],
+                [8, 13],
+                [9, 13],
+                [11, 13],
+                [12, 13],
+                [13, 13],
+                [14, 13],
+                [15, 13],
+                [16, 13],
+                [18, 13],
+                [19, 13],
+                [20, 13],
+                [21, 13],
+                [22, 13],
+                [26, 13],
+                [27, 13],
+            ]
 
-            vulnerable_side = self.find_weaker_side(game_state) # change to detect less loaded enemy def's side. 1 is right, 0 is left.
+            vulnerable_side = self.find_weaker_side(
+                game_state
+            )  # change to detect less loaded enemy def's side. 1 is right, 0 is left.
             if vulnerable_side == 1:
                 filter_locations.append([4, 13])
             else:
                 filter_locations.append([23, 13])
-            
+
             game_state.attempt_spawn(FILTER, filter_locations)
 
             encryptor_locations = [[21, 8], [22, 8]]
@@ -106,7 +138,6 @@ class AlgoStrategy(gamelib.AlgoCore):
 
             emp_location = [[23, 9]]
             game_state.attempt_spawn(EMP, emp_location, 1000)
-
 
         """
         # If the turn is less than 5, stall with Scramblers and wait to see enemy's base
@@ -144,12 +175,41 @@ class AlgoStrategy(gamelib.AlgoCore):
         # More community tools available at: https://terminal.c1games.com/rules#Download
 
         # Place destructors that attack enemy units
-        destructor_locations = [[2, 13], [3, 13], [10, 13], [17, 13], [24, 13], [25, 13]]
+        destructor_locations = [
+            [2, 13],
+            [3, 13],
+            [10, 13],
+            [17, 13],
+            [24, 13],
+            [25, 13],
+        ]
         # attempt_spawn will try to spawn units if we have resources, and will check if a blocking unit is already there
         game_state.attempt_spawn(DESTRUCTOR, destructor_locations)
-        
+
         # Place filters in front of destructors to soak up damage for them
-        filter_locations = [[0, 13], [1, 13], [5, 13], [6, 13], [7, 13], [8, 13], [9, 13], [11, 13], [12, 13], [13, 13], [14, 13], [15, 13], [16, 13], [18, 13], [19, 13], [20, 13], [21, 13], [22, 13], [23, 13], [26, 13], [27, 13]]
+        filter_locations = [
+            [0, 13],
+            [1, 13],
+            [5, 13],
+            [6, 13],
+            [7, 13],
+            [8, 13],
+            [9, 13],
+            [11, 13],
+            [12, 13],
+            [13, 13],
+            [14, 13],
+            [15, 13],
+            [16, 13],
+            [18, 13],
+            [19, 13],
+            [20, 13],
+            [21, 13],
+            [22, 13],
+            [23, 13],
+            [26, 13],
+            [27, 13],
+        ]
         game_state.attempt_spawn(FILTER, filter_locations)
         # upgrade filters so they soak more damage
         game_state.attempt_upgrade(filter_locations)
@@ -162,7 +222,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         """
         for location in self.scored_on_locations:
             # Build destructor one space above so that it doesn't block our own edge spawn locations
-            build_location = [location[0], location[1]+1]
+            build_location = [location[0], location[1] + 1]
             game_state.attempt_spawn(DESTRUCTOR, build_location)
 
     def stall_with_scramblers(self, game_state):
@@ -170,18 +230,23 @@ class AlgoStrategy(gamelib.AlgoCore):
         Send out Scramblers at random locations to defend our base from enemy moving units.
         """
         # We can spawn moving units on our edges so a list of all our edge locations
-        friendly_edges = game_state.game_map.get_edge_locations(game_state.game_map.BOTTOM_LEFT) + game_state.game_map.get_edge_locations(game_state.game_map.BOTTOM_RIGHT)
-        
-        # Remove locations that are blocked by our own firewalls 
+        friendly_edges = game_state.game_map.get_edge_locations(
+            game_state.game_map.BOTTOM_LEFT
+        ) + game_state.game_map.get_edge_locations(game_state.game_map.BOTTOM_RIGHT)
+
+        # Remove locations that are blocked by our own firewalls
         # since we can't deploy units there.
         deploy_locations = self.filter_blocked_locations(friendly_edges, game_state)
-        
+
         # While we have remaining bits to spend lets send out scramblers randomly.
-        while game_state.get_resource(BITS) >= game_state.type_cost(SCRAMBLER)[BITS] and len(deploy_locations) > 0:
+        while (
+            game_state.get_resource(BITS) >= game_state.type_cost(SCRAMBLER)[BITS]
+            and len(deploy_locations) > 0
+        ):
             # Choose a random deploy location.
             deploy_index = random.randint(0, len(deploy_locations) - 1)
             deploy_location = deploy_locations[deploy_index]
-            
+
             game_state.attempt_spawn(SCRAMBLER, deploy_location)
             """
             We don't have to remove the location since multiple information 
@@ -198,7 +263,12 @@ class AlgoStrategy(gamelib.AlgoCore):
         cheapest_unit = FILTER
         for unit in stationary_units:
             unit_class = gamelib.GameUnit(unit, game_state.config)
-            if unit_class.cost[game_state.BITS] < gamelib.GameUnit(cheapest_unit, game_state.config).cost[game_state.BITS]:
+            if (
+                unit_class.cost[game_state.BITS]
+                < gamelib.GameUnit(cheapest_unit, game_state.config).cost[
+                    game_state.BITS
+                ]
+            ):
                 cheapest_unit = unit
 
         # Now let's build out a line of stationary units. This will prevent our EMPs from running into the enemy base.
@@ -223,21 +293,29 @@ class AlgoStrategy(gamelib.AlgoCore):
             damage = 0
             for path_location in path:
                 # Get number of enemy destructors that can attack the final location and multiply by destructor damage
-                damage += len(game_state.get_attackers(path_location, 0)) * gamelib.GameUnit(DESTRUCTOR, game_state.config).damage_i
+                damage += (
+                    len(game_state.get_attackers(path_location, 0))
+                    * gamelib.GameUnit(DESTRUCTOR, game_state.config).damage_i
+                )
             damages.append(damage)
-        
+
         # Now just return the location that takes the least damage
         return location_options[damages.index(min(damages))]
 
-    def detect_enemy_unit(self, game_state, unit_type=None, valid_x = None, valid_y = None):
+    def detect_enemy_unit(self, game_state, unit_type=None, valid_x=None, valid_y=None):
         total_units = 0
         for location in game_state.game_map:
             if game_state.contains_stationary_unit(location):
                 for unit in game_state.game_map[location]:
-                    if unit.player_index == 1 and (unit_type is None or unit.unit_type == unit_type) and (valid_x is None or location[0] in valid_x) and (valid_y is None or location[1] in valid_y):
+                    if (
+                        unit.player_index == 1
+                        and (unit_type is None or unit.unit_type == unit_type)
+                        and (valid_x is None or location[0] in valid_x)
+                        and (valid_y is None or location[1] in valid_y)
+                    ):
                         total_units += 1
         return total_units
-        
+
     def filter_blocked_locations(self, locations, game_state):
         filtered = []
         for location in locations:
@@ -259,18 +337,23 @@ class AlgoStrategy(gamelib.AlgoCore):
         for breach in breaches:
             location = breach[0]
             unit_owner_self = breach[4] == 1
-            # When parsing the frame data directly, 
+            # When parsing the frame data directly,
             # 1 is integer for yourself, 2 is opponent (StarterKit code uses 0, 1 as player_index instead)
             if not unit_owner_self:
                 gamelib.debug_write("Got scored on at: {}".format(location))
                 self.scored_on_locations.append(location)
-                gamelib.debug_write("All locations: {}".format(self.scored_on_locations))
+                gamelib.debug_write(
+                    "All locations: {}".format(self.scored_on_locations)
+                )
 
     # Assess enemy defence & identify weaker side (for opening)
-    def find_weaker_side(self, game_state, weights = None):
+    def find_weaker_side(self, game_state, weights=None):
         if not weights:
-            weights = [1, 6] # filter is worth 1 badness pt, destructor - 6 badness pts.
-        
+            weights = [
+                1,
+                6,
+            ]  # filter is worth 1 badness pt, destructor - 6 badness pts.
+
         weights_by_def_unit = dict(zip([FILTER, DESTRUCTOR], weights))
 
         left_strength, right_strength = (0, 0)
@@ -278,12 +361,14 @@ class AlgoStrategy(gamelib.AlgoCore):
         for location in game_state.game_map:
             if game_state.contains_stationary_unit(location):
                 for unit in game_state.game_map[location]:
-                    if unit.player_index == 1 and (unit.unit_type is DESTRUCTOR or unit.unit_type == FILTER):
+                    if unit.player_index == 1 and (
+                        unit.unit_type is DESTRUCTOR or unit.unit_type == FILTER
+                    ):
                         if location[0] > 14:
                             left_strength += weights_by_def_unit[unit.unit_type]
-                        else:                    
+                        else:
                             right_strength += weights_by_def_unit[unit.unit_type]
-        
+
         # Return side with less strength
         if left_strength > right_strength:
             weaker_side = 1
@@ -300,8 +385,9 @@ class AlgoStrategy(gamelib.AlgoCore):
 
             location = tuple(death[0])
             self.death_counter.update([location])
-            gamelib.debug_write('death_counter:')
+            gamelib.debug_write("death_counter:")
             gamelib.debug_write(self.death_counter.most_common(5))
+
 
 if __name__ == "__main__":
     algo = AlgoStrategy()

@@ -3,6 +3,7 @@ import json
 from .game_state import GameState
 from .util import get_command, debug_write, BANNER_TEXT, send_command
 
+
 class AlgoCore(object):
     """
     This class handles communication with the game engine. \n
@@ -12,6 +13,7 @@ class AlgoCore(object):
         * config (JSON): json object containing information about the game
 
     """
+
     def __init__(self):
         self.config = None
 
@@ -33,7 +35,7 @@ class AlgoCore(object):
         """
         send_command("[]")
         send_command("[]")
-    
+
     def on_action_frame(self, action_frame_game_state):
         """
         After each deploy phase, the game engine will run the action phase of the round.
@@ -42,7 +44,6 @@ class AlgoCore(object):
         They can be handled in this function. 
         """
         pass
-
 
     def start(self):
         """ 
@@ -87,7 +88,11 @@ class AlgoCore(object):
                     """
                     Something is wrong? Received an incorrect or improperly formatted string.
                     """
-                    debug_write("Got unexpected string with turnInfo: {}".format(game_state_string))
+                    debug_write(
+                        "Got unexpected string with turnInfo: {}".format(
+                            game_state_string
+                        )
+                    )
             else:
                 """
                 Something is wrong? Received an incorrect or improperly formatted string.

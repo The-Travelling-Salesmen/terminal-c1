@@ -2,6 +2,7 @@ import math
 from .unit import GameUnit
 from .util import debug_write
 
+
 class GameMap:
     """Holds data about the current game map and provides functions
     useful for getting information related to the map.
@@ -20,6 +21,7 @@ class GameMap:
         * BOTTOM_RIGHT (int): A constant that represents the bottom right edge
 
     """
+
     def __init__(self, config):
         """Initializes constants and game map
 
@@ -36,36 +38,40 @@ class GameMap:
         self.BOTTOM_LEFT = 2
         self.BOTTOM_RIGHT = 3
         self.__map = self.__empty_grid()
-        self.__start = [13,0]
-    
+        self.__start = [13, 0]
+
     def __getitem__(self, location):
         if len(location) == 2 and self.in_arena_bounds(location):
-            x,y = location
+            x, y = location
             return self.__map[x][y]
         self._invalid_coordinates(location)
 
     def __setitem__(self, location, val):
-        if type(location) == tuple and len(location) == 2 and self.in_arena_bounds(location):
+        if (
+            type(location) == tuple
+            and len(location) == 2
+            and self.in_arena_bounds(location)
+        ):
             self.__map[location[0]][location[1]] = val
             return
         self._invalid_coordinates(location)
 
     def __iter__(self):
-        self.__start = [13,0]
+        self.__start = [13, 0]
         return self
-    
+
     def __next__(self):
         location = self.__start
-        if location == [15,27]:
+        if location == [15, 27]:
             raise StopIteration
-        new_location = [location[0]+1, location[1]]
-        while not self.in_arena_bounds(new_location) and not location == [14,27]:
+        new_location = [location[0] + 1, location[1]]
+        while not self.in_arena_bounds(new_location) and not location == [14, 27]:
             if new_location[0] == self.ARENA_SIZE:
-                new_location = [0, new_location[1]+1]
+                new_location = [0, new_location[1] + 1]
             else:
-                new_location = [new_location[0]+1, new_location[1]]
+                new_location = [new_location[0] + 1, new_location[1]]
         self.__start = new_location
-        return location 
+        return location
 
     def __empty_grid(self):
         grid = []
@@ -94,12 +100,12 @@ class GameMap:
         row_size = y + 1
         startx = half_board - row_size
         endx = startx + (2 * row_size) - 1
-        top_half_check = (y < self.HALF_ARENA and x >= startx and x <= endx)
+        top_half_check = y < self.HALF_ARENA and x >= startx and x <= endx
 
         row_size = (self.ARENA_SIZE - 1 - y) + 1
         startx = half_board - row_size
         endx = startx + (2 * row_size) - 1
-        bottom_half_check = (y >= self.HALF_ARENA and x >= startx and x <= endx)
+        bottom_half_check = y >= self.HALF_ARENA and x >= startx and x <= endx
 
         return bottom_half_check or top_half_check
 
@@ -113,8 +119,17 @@ class GameMap:
             A list of locations along the requested edge
 
         """
-        if not quadrant_description in [self.TOP_LEFT, self.TOP_RIGHT, self.BOTTOM_LEFT, self.BOTTOM_RIGHT]:
-            self.warn("Passed invalid quadrant_description '{}'. See the documentation for valid inputs for get_edge_locations.".format(quadrant_description))
+        if not quadrant_description in [
+            self.TOP_LEFT,
+            self.TOP_RIGHT,
+            self.BOTTOM_LEFT,
+            self.BOTTOM_RIGHT,
+        ]:
+            self.warn(
+                "Passed invalid quadrant_description '{}'. See the documentation for valid inputs for get_edge_locations.".format(
+                    quadrant_description
+                )
+            )
             return
 
         edges = self.get_edges()
@@ -148,7 +163,7 @@ class GameMap:
             y = num
             bottom_right.append([int(x), int(y)])
         return [top_right, top_left, bottom_left, bottom_right]
-    
+
     def add_unit(self, unit_type, location, player_index=0):
         """Add a single GameUnit to the map at the given location.
 
@@ -164,10 +179,16 @@ class GameMap:
         if not self.in_arena_bounds(location):
             self._invalid_coordinates(location)
         if player_index < 0 or player_index > 1:
-            self.warn("Player index {} is invalid. Player index should be 0 or 1.".format(player_index))
+            self.warn(
+                "Player index {} is invalid. Player index should be 0 or 1.".format(
+                    player_index
+                )
+            )
 
         x, y = location
-        new_unit = GameUnit(unit_type, self.config, player_index, None, location[0], location[1])
+        new_unit = GameUnit(
+            unit_type, self.config, player_index, None, location[0], location[1]
+        )
         if not new_unit.stationary:
             self.__map[x][y].append(new_unit)
         else:
@@ -184,7 +205,7 @@ class GameMap:
         """
         if not self.in_arena_bounds(location):
             self._invalid_coordinates(location)
-        
+
         x, y = location
         self.__map[x][y] = []
 
@@ -200,19 +221,27 @@ class GameMap:
 
         """
         if radius < 0 or radius > self.ARENA_SIZE:
-            self.warn("Radius {} was passed to get_locations_in_range. Expected integer between 0 and {}".format(radius, self.ARENA_SIZE))
+            self.warn(
+                "Radius {} was passed to get_locations_in_range. Expected integer between 0 and {}".format(
+                    radius, self.ARENA_SIZE
+                )
+            )
         if not self.in_arena_bounds(location):
             self._invalid_coordinates(location)
 
         x, y = location
         locations = []
         search_radius = math.ceil(radius)
-        getHitRadius = self.config["unitInformation"][0]['getHitRadius']
+        getHitRadius = self.config["unitInformation"][0]["getHitRadius"]
         for i in range(int(x - search_radius), int(x + search_radius + 1)):
             for j in range(int(y - search_radius), int(y + search_radius + 1)):
                 new_location = [i, j]
                 # A unit with a given range affects all locations who's centers are within that range + get hit radius
-                if self.in_arena_bounds(new_location) and self.distance_between_locations(location, new_location) < radius + getHitRadius:
+                if (
+                    self.in_arena_bounds(new_location)
+                    and self.distance_between_locations(location, new_location)
+                    < radius + getHitRadius
+                ):
                     locations.append(new_location)
         return locations
 
@@ -230,11 +259,11 @@ class GameMap:
         x1, y1 = location_1
         x2, y2 = location_2
 
-        return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
+        return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
     def warn(self, message):
         """
         Used internally by game_map to print out default messaging
         """
-        if(self.enable_warnings):
+        if self.enable_warnings:
             debug_write(message)
