@@ -78,8 +78,8 @@ class AlgoStrategy(gamelib.AlgoCore):
 
         # Defence
         build_defences(game_state, self.units)
-       
-       # Offense
+
+        # Offense
         if game_state.turn_number > 3:
             
             emp_location = [[23, 9]]

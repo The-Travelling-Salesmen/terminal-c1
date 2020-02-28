@@ -5,6 +5,8 @@ import warnings
 from sys import maxsize
 import json
 from defence import build_defences
+
+from reactive_defence import build_reactive_defense
 from adaptive_opening import build_defences_with_adaptive_opening
 
 
@@ -72,6 +74,8 @@ class AlgoStrategy(gamelib.AlgoCore):
 
         self.strategy(game_state)
 
+        self.scored_on_locations = []
+
         game_state.submit_turn()
 
 
@@ -82,14 +86,17 @@ class AlgoStrategy(gamelib.AlgoCore):
 
     def strategy(self, game_state):
 
+        # Dynamic defence
+        if game_state.turn_number < 4 and len(self.scored_on_locations) > 0:
+            build_reactive_defense(gamelib, game_state, self.units, self.scored_on_locations)
+
         # Initial wall defence
         # Adaptive opening side selection
-        filter_locs, self.is_right_opening, save_cores = build_defences_with_adaptive_opening(game_state, self.units, self.is_right_opening, self.filter_locs)
-        
+        filter_locs, self.is_right_opening = build_defences_with_adaptive_opening(game_state, self.units, self.is_right_opening, self.filter_locs)
+    
         if game_state.turn_number > 3:
             # Defence
-            if not save_cores:
-                build_defences(game_state, self.units, self.is_right_opening, filter_locs)
+            build_defences(game_state, self.units, self.is_right_opening, filter_locs)
         
              # Offense            
             if self.is_right_opening:
@@ -124,9 +131,7 @@ class AlgoStrategy(gamelib.AlgoCore):
             # When parsing the frame data directly, 
             # 1 is integer for yourself, 2 is opponent (StarterKit code uses 0, 1 as player_index instead)
             if not unit_owner_self:
-                gamelib.debug_write("Got scored on at: {}".format(location))
                 self.scored_on_locations.append(location)
-                gamelib.debug_write("All locations: {}".format(self.scored_on_locations))
 
 
 if __name__ == "__main__":

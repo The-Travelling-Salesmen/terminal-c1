@@ -4,6 +4,7 @@ import math
 import warnings
 from sys import maxsize
 import json
+from collections import Counter
 
 
 """
@@ -42,6 +43,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         CORES = 0
         # This is a good place to do initial setup
         self.scored_on_locations = []
+        self.death_counter = Counter()
 
     
         
@@ -256,7 +258,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         breaches = events["breach"]
         for breach in breaches:
             location = breach[0]
-            unit_owner_self = True if breach[4] == 1 else False
+            unit_owner_self = breach[4] == 1
             # When parsing the frame data directly, 
             # 1 is integer for yourself, 2 is opponent (StarterKit code uses 0, 1 as player_index instead)
             if not unit_owner_self:
@@ -290,6 +292,16 @@ class AlgoStrategy(gamelib.AlgoCore):
         else:
             weaker_side = random.randint(0, 1)
         return weaker_side
+
+        deaths = events["death"]
+        for death in deaths:
+            if death[4] == True or death[4] == 2:
+                continue
+
+            location = tuple(death[0])
+            self.death_counter.update([location])
+            gamelib.debug_write('death_counter:')
+            gamelib.debug_write(self.death_counter.most_common(5))
 
 if __name__ == "__main__":
     algo = AlgoStrategy()

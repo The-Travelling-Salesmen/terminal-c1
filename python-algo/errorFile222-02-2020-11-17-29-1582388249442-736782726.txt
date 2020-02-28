@@ -1,0 +1,10 @@
+Random seed: 7451842187645814220
+---------------- Starting Your Algo --------------------
+Traceback (most recent call last):
+  File "/Users/larsankile/GitLocal/terminal-c1/python-algo/algo_strategy.py", line 241, in <module>
+    algo.start()
+  File "/Users/larsankile/GitLocal/terminal-c1/python-algo/gamelib/algocore.py", line 59, in start
+    game_state_string = get_command()
+  File "/Users/larsankile/GitLocal/terminal-c1/python-algo/gamelib/util.py", line 12, in get_command
+    ret = sys.stdin.readline()
+KeyboardInterrupt
